@@ -1,5 +1,9 @@
 {
   inputs = {
+    cross-compile-test = {
+      url = "github:BurNiinTRee/cross-compile-test";
+      flake = false;
+    };
     drv-parts.url = "github:davhau/drv-parts";
     hercules-ci-agent = {
       url = "github:hercules-ci/hercules-ci-agent";
@@ -12,11 +16,16 @@
     drv-parts,
     flake-parts,
     hercules-ci-agent,
+    cross-compile-test,
   }:
     flake-parts.lib.mkFlake {inherit inputs;} ({lib, ...}: {
       systems = ["x86_64-linux"];
+      debug = true;
 
-      imports = [(hercules-ci-agent + /variants.nix) drv-parts.modules.flake-parts.drv-parts];
+      imports = [
+        (hercules-ci-agent + /variants.nix)
+        drv-parts.modules.flake-parts.drv-parts
+      ];
 
       variants = let
         crossSystems = {
@@ -30,16 +39,24 @@
         })
         crossSystems;
 
-      perSystem = {config, ...}: {
+      perSystem = {
+        config,
+        self',
+        pkgs,
+        ...
+      }: {
         drvs = {
           mylib = {
-            imports = [./nix/mylib.nix];
+            imports = [./mylib.nix];
+            deps.mylib-src = cross-compile-test + /mylib;
           };
           generator = {
-            imports = [./nix/generator.nix];
+            imports = [./generator.nix];
+            deps.generator-src = cross-compile-test + /generator;
           };
           hello = {
-            imports = [./nix/hello.nix];
+            imports = [./hello.nix];
+            deps.hello-src = cross-compile-test + /hello;
           };
         };
         packages = let

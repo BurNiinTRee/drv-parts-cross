@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "cross-compile-test": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1679227075,
+        "narHash": "sha256-F1sJkyq12PuMOF3ZQHMMgXToG207EUUupnWL/t5uVJE=",
+        "owner": "BurNiinTRee",
+        "repo": "cross-compile-test",
+        "rev": "d5b4bc474458d25872fb38409b216c90a8fee285",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BurNiinTRee",
+        "repo": "cross-compile-test",
+        "type": "github"
+      }
+    },
     "drv-parts": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -7,11 +23,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1676734140,
-        "narHash": "sha256-PXYYBFkQJjp1neiqSxI5ci5dIvpAxkwG302u+i4KQ4s=",
+        "lastModified": 1679210066,
+        "narHash": "sha256-0t6UZrLmIEsH3R8Jk8mo2XFGIPJmSWLsCR6HlSp3va8=",
         "owner": "davhau",
         "repo": "drv-parts",
-        "rev": "286136be53058a2af77c8175705b5240c6d187fe",
+        "rev": "38f59f9eb2dbcf9ad6b939ec47c005033445f13e",
         "type": "github"
       },
       "original": {
@@ -58,11 +74,11 @@
         "nixpkgs-lib": "nixpkgs-lib_2"
       },
       "locked": {
-        "lastModified": 1675933616,
-        "narHash": "sha256-/rczJkJHtx16IFxMmAWu5nNYcSXNg1YYXTHoGjLrLUA=",
+        "lastModified": 1678379998,
+        "narHash": "sha256-TZdfNqftHhDuIFwBcN9MUThx5sQXCTeZk9je5byPKRw=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "47478a4a003e745402acf63be7f9a092d51b83d7",
+        "rev": "c13d60b89adea3dc20704c045ec4d50dd964d447",
         "type": "github"
       },
       "original": {
@@ -73,11 +89,11 @@
     "hercules-ci-agent": {
       "flake": false,
       "locked": {
-        "lastModified": 1675890281,
-        "narHash": "sha256-RfZ6iuBxDFAddRbr0bOmg9ROZ2jtg+Bg3wIHJ8yhUt0=",
+        "lastModified": 1679065768,
+        "narHash": "sha256-VYzLS/51fPx8wId7QeLJWHC9oL4QRbOJwu96G4wd/qA=",
         "owner": "hercules-ci",
         "repo": "hercules-ci-agent",
-        "rev": "40d5243b4ea4ecedbf021b50272dc0937a2ad4df",
+        "rev": "3a118a985ce57c2a0d8ce567b1f007d57933c540",
         "type": "github"
       },
       "original": {
@@ -122,11 +138,11 @@
     "nixpkgs-lib_2": {
       "locked": {
         "dir": "lib",
-        "lastModified": 1675183161,
-        "narHash": "sha256-Zq8sNgAxDckpn7tJo7V1afRSk2eoVbu3OjI1QklGLNg=",
+        "lastModified": 1678375444,
+        "narHash": "sha256-XIgHfGvjFvZQ8hrkfocanCDxMefc/77rXeHvYdzBMc8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e1e1b192c1a5aab2960bf0a0bd53a2e8124fa18e",
+        "rev": "130fa0baaa2b93ec45523fdcde942f6844ee9f6e",
         "type": "github"
       },
       "original": {
@@ -139,11 +155,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1676569297,
-        "narHash": "sha256-2n4C4H3/U+3YbDrQB6xIw7AaLdFISCCFwOkcETAigqU=",
+        "lastModified": 1678898370,
+        "narHash": "sha256-xTICr1j+uat5hk9FyuPOFGxpWHdJRibwZC+ATi0RbtE=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ac1f5b72a9e95873d1de0233fddcb56f99884b37",
+        "rev": "ac718d02867a84b42522a0ece52d841188208f2c",
         "type": "github"
       },
       "original": {
@@ -153,6 +169,7 @@
     },
     "root": {
       "inputs": {
+        "cross-compile-test": "cross-compile-test",
         "drv-parts": "drv-parts",
         "flake-parts": "flake-parts_2",
         "hercules-ci-agent": "hercules-ci-agent",
