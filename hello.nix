@@ -2,6 +2,7 @@
   drv-parts,
   lib,
   config,
+  specialArgs,
   ...
 }: {
   imports = [drv-parts.modules.drv-parts.mkDerivation];
@@ -12,8 +13,12 @@
   }: {
     inherit (nixpkgs) stdenv;
     inherit (nixpkgs.pkgsBuildHost) meson ninja pkg-config;
-    mylib = packages.mylib;
-    generator = packages.generator;
+    mylib = packages.mylib.extendModules {
+      specialArgs = lib.recursiveUpdateUntil (path: l: r: lib.last path == "nixpkgs") specialArgs {dependencySets.nixpkgs = specialArgs.dependencySets.nixpkgs.pkgsHostTarget;};
+    };
+    generator = packages.generator.extendModules {
+      specialArgs = lib.recursiveUpdateUntil (path: l: r: lib.last path == "nixpkgs") specialArgs {dependencySets.nixpkgs = specialArgs.dependencySets.nixpkgs.pkgsBuildHost;};
+    };
     hello-src = lib.mkDefault null;
   };
 
@@ -25,10 +30,10 @@
       meson
       ninja
       pkg-config
-      generator
+      generator.config.public
     ];
     buildInputs = with config.deps; [
-      mylib
+      mylib.config.public
     ];
   };
 }

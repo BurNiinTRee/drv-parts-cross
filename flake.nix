@@ -63,6 +63,7 @@
           packages' = config.variants.aarch64-linux.packages;
         in {
           crossLib = packages'.mylib;
+          crossGen = packages'.generator;
           crossHello = packages'.hello;
         };
       };
