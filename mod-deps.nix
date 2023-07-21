@@ -1,29 +1,40 @@
-{config, lib, drv-parts, specialArgs, ...}:
-let l = lib // builtins;
-in{
-  imports = [ drv-parts.modules.drv-parts.mkDerivation];
+{
+  config,
+  lib,
+  drv-parts,
+  specialArgs,
+  ...
+}: let
+  l = lib // builtins;
+  t = l.types;
+in {
+  imports = [drv-parts.modules.drv-parts.mkDerivation];
   options = {
-    depsMod = l.mkOption {
-      type = l.attrsOf l.deferredModule;
-    };
     nativeBuildInputs' = l.mkOption {
-      type = l.listOf l.deferredModule;
+      type = t.listOf t.raw;
       default = [];
     };
     buildInputs' = l.mkOption {
-      type = l.listOf l.deferredModule;
+      type = t.listOf t.raw;
       default = [];
     };
   };
   config = {
-    depsMod = l.mapAttrs (_: drv-parts.lib.makeModule) config.deps;
-    nativeBuildInputs = l.map (mod: l.evalModules {
-      modules = [mod];
-      specialArgs = lib.recursiveUpdateUntil (path: l: r: (lib.traceVal path) == ["dependencySets" "nixpkgs"]) specialArgs {dependencySets.nixpkgs = specialArgs.dependencySets.nixpkgs.pkgsBuildHost;};
-    });
-    buildInputs = l.map (mod: l.evalModules {
-      modules = [mod];
-      specialArgs = lib.recursiveUpdateUntil (path: l: r: (lib.traceVal path) == ["dependencySets" "nixpkgs"]) specialArgs {dependencySets.nixpkgs = specialArgs.dependencySets.nixpkgs.pkgsHostTarget;};
-    });
+    mkDerivation = {
+      nativeBuildInputs = l.map (mod:
+        (mod.extendModules {
+          specialArgs = lib.recursiveUpdateUntil (path: l: r: (lib.traceVal path) == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsBuildHost;};
+        })
+        .config
+        .public)
+      config.nativeBuildInputs';
+      buildInputs = l.map (mod:
+        (mod.extendModules {
+          specialArgs = lib.recursiveUpdateUntil (path: l: r: (lib.traceVal path) == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsHostTarget;};
+        })
+        .config
+        .public)
+      config.buildInputs';
+    };
   };
 }
