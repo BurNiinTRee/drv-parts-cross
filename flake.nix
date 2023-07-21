@@ -23,7 +23,7 @@
       debug = true;
 
       imports = [
-        (hercules-ci-agent + /variants.nix)
+        (hercules-ci-agent + /nix/variants.nix)
         drv-parts.modules.flake-parts.drv-parts
       ];
 
