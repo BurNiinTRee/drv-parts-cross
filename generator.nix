@@ -14,7 +14,7 @@
     inherit (nixpkgs) stdenv;
     inherit (nixpkgs.pkgsBuildHost) meson ninja pkg-config;
     mylib = packages.mylib.extendModules {
-      specialArgs = lib.recursiveUpdateUntil (path: l: r: lib.last path == "nixpkgs") specialArgs {dependencySets.nixpkgs = specialArgs.dependencySets.nixpkgs.pkgsHostTarget;};
+      specialArgs = lib.recursiveUpdateUntil (path: l: r: path == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsHostTarget;};
     };
     generator-src = lib.mkDefault null;
   };
