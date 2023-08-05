@@ -23,14 +23,14 @@ in {
     mkDerivation = {
       nativeBuildInputs = l.map (mod:
         (mod.extendModules {
-          specialArgs = lib.recursiveUpdateUntil (path: l: r: (lib.traceVal path) == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsBuildHost;};
+          specialArgs = lib.recursiveUpdateUntil (path: l: r: path == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsBuildHost;};
         })
         .config
         .public)
       config.nativeBuildInputs';
       buildInputs = l.map (mod:
         (mod.extendModules {
-          specialArgs = lib.recursiveUpdateUntil (path: l: r: (lib.traceVal path) == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsHostTarget;};
+          specialArgs = lib.recursiveUpdateUntil (path: l: r: path == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsHostTarget;};
         })
         .config
         .public)
