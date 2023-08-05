@@ -14,9 +14,9 @@ in {
   }: {
     inherit (nixpkgs) stdenv;
     inherit (nixpkgs.pkgsBuildHost) meson ninja pkg-config;
-    mylib = packages.mylib;
-    generator = packages.generator;
-    hello-src = lib.mkDefault null;
+    mylib = lib.mkDefault null;
+    generator = lib.mkDefault null;
+    src = lib.mkDefault null;
   };
 
   name = "hello";
@@ -28,7 +28,7 @@ in {
     d.mylib
   ];
   mkDerivation = {
-    src = d.hello-src;
+    inherit (d) src;
     nativeBuildInputs = [
       d.meson
       d.ninja

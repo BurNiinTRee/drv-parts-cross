@@ -4,7 +4,7 @@
       url = "github:BurNiinTRee/cross-compile-test";
       flake = false;
     };
-    drv-parts.url = "github:davhau/drv-parts";
+    dream2nix.url = "github:nix-community/dream2nix";
     hercules-ci-agent = {
       url = "github:hercules-ci/hercules-ci-agent";
       flake = false;
@@ -13,18 +13,49 @@
   outputs = inputs @ {
     self,
     nixpkgs,
-    drv-parts,
+    dream2nix,
     flake-parts,
     hercules-ci-agent,
     cross-compile-test,
   }:
-    flake-parts.lib.mkFlake {inherit inputs;} ({lib, ...}: {
+    flake-parts.lib.mkFlake {inherit inputs;} ({
+      config,
+      lib,
+      ...
+    }: let
+      drv-parts-modules = {
+        mylib = {
+          imports = [./mylib.nix];
+          deps = {
+            src = cross-compile-test + /mylib;
+          };
+        };
+        generator = {
+          imports = [./generator.nix];
+          deps = {
+            src = cross-compile-test + /generator;
+            mylib = drv-parts-modules.mylib;
+          };
+        };
+        hello = {
+          imports = [./hello.nix];
+          deps = {
+            src = cross-compile-test + /hello;
+            mylib = drv-parts-modules.mylib;
+            generator = drv-parts-modules.generator;
+          };
+        };
+      };
+    in {
       systems = ["x86_64-linux"];
       debug = true;
 
+      flake = {
+        modules.drv-parts = drv-parts-modules;
+      };
+
       imports = [
         (hercules-ci-agent + /nix/variants.nix)
-        drv-parts.modules.flake-parts.drv-parts
       ];
 
       variants = let
@@ -44,28 +75,28 @@
         self',
         pkgs,
         ...
-      }: {
-        drvs = {
-          mylib = {
-            imports = [./mylib.nix];
-            deps.mylib-src = cross-compile-test + /mylib;
+      }: let
+        _callModule = module:
+          lib.evalModules {
+            modules = [module dream2nix.modules.drv-parts.core];
+            specialArgs.dream2nix = dream2nix;
+            specialArgs.packageSets.nixpkgs = pkgs;
           };
-          generator = {
-            imports = [./generator.nix];
-            deps.generator-src = cross-compile-test + /generator;
-          };
-          hello = {
-            imports = [./hello.nix];
-            deps.hello-src = cross-compile-test + /hello;
-          };
-        };
-        packages = let
-          packages' = config.variants.aarch64-linux.packages;
-        in {
-          crossLib = packages'.mylib;
-          crossGen = packages'.generator;
-          crossHello = packages'.hello;
-        };
+        callModule = module: (_callModule module).config.public;
+      in {
+        packages =
+          {
+            mylib = callModule drv-parts-modules.mylib;
+            generator = callModule drv-parts-modules.generator;
+            hello = callModule drv-parts-modules.hello;
+          }
+          // (let
+            packages' = config.variants.aarch64-linux.packages;
+          in {
+            crossLib = packages'.mylib;
+            crossGen = packages'.generator;
+            crossHello = packages'.hello;
+          });
       };
     });
 }

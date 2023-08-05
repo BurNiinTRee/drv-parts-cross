@@ -1,36 +1,40 @@
 {
   config,
   lib,
-  drv-parts,
-  specialArgs,
+  dream2nix,
+  packageSets,
   ...
 }: let
   l = lib // builtins;
   t = l.types;
 in {
-  imports = [drv-parts.modules.drv-parts.mkDerivation];
+  imports = [dream2nix.modules.drv-parts.mkDerivation];
   options = {
     nativeBuildInputs' = l.mkOption {
-      type = t.listOf t.raw;
+      type = t.listOf t.deferredModule;
       default = [];
     };
     buildInputs' = l.mkOption {
-      type = t.listOf t.raw;
+      type = t.listOf t.deferredModule;
       default = [];
     };
   };
   config = {
     mkDerivation = {
       nativeBuildInputs = l.map (mod:
-        (mod.extendModules {
-          specialArgs = lib.recursiveUpdateUntil (path: l: r: path == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsBuildHost;};
+        (l.evalModules {
+          modules = [mod dream2nix.modules.drv-parts.core];
+          specialArgs.dream2nix = dream2nix;
+          specialArgs.packageSets.nixpkgs = packageSets.nixpkgs.pkgsBuildHost;
         })
         .config
         .public)
       config.nativeBuildInputs';
       buildInputs = l.map (mod:
-        (mod.extendModules {
-          specialArgs = lib.recursiveUpdateUntil (path: l: r: path == ["packageSets" "nixpkgs"]) specialArgs {packageSets.nixpkgs = specialArgs.packageSets.nixpkgs.pkgsHostTarget;};
+        (l.evalModules {
+          modules = [mod dream2nix.modules.drv-parts.core];
+          specialArgs.dream2nix = dream2nix;
+          specialArgs.packageSets.nixpkgs = packageSets.nixpkgs.pkgsHostTarget;
         })
         .config
         .public)
